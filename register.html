@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land Registration</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<link rel="stylesheet" href="fontawesome/css/all.min.css"> 
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <h1>LRIS.</h1>
+            <p class="logo2">Blockchain Solution</p>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="verify.html">Ownership Verification</a></li>
+            </ul>
+        </nav>
+        <div class="logout">
+            <a href="#" id="logout">Logout</a>
+        </div>
+    </header>  
+    <main>
+        <p align="center" class="heading">Land Registration Form</p>
+        <form id="registrationForm">  
+            <p class="heading-2">Owner Information</p>   
+            <div class="form-group">  
+                <i class="fas fa-user"></i>  
+                <input type="text" id="ownerName" name="ownerName" placeholder=" " required>  
+                <label for="ownerName">Name</label>  
+            </div>  
+            <div class="form-group">  
+                <i class="fas fa-home"></i>  
+                <input type="text" id="ownerAddress" name="ownerAddress" placeholder=" " required>  
+                <label for="ownerAddress">Address</label>  
+            </div>  
+            <div class="form-group">  
+                <i class="fas fa-phone"></i>  
+                <input type="tel" id="ownerPhone" name="ownerPhone" placeholder=" " required>  
+                <label for="ownerPhone">Phone number</label>  
+            </div>  
+            <div class="form-group">  
+                <i class="fas fa-envelope"></i>  
+                <input type="email" id="ownerEmail" name="ownerEmail" placeholder=" " required>  
+                <label for="ownerEmail">Email address</label>  
+            </div>  
+            <p class="heading-2">Land Information</p>  
+            <div class="form-group">  
+                <i class="fas fa-map-marker-alt"></i>  
+                <input type="text" id="landLocation" name="landLocation" placeholder=" " required>  
+                <label for="landLocation">Land Location</label>  
+            </div>  
+            <div class="form-group">  
+                <i class="fas fa-cube"></i>  
+                <input type="number" id="landArea" name="landArea" placeholder=" " required>  
+                <label for="landArea">Land Area (in sq. meters)</label>  
+            </div>  
+                 <div class="form-group">  
+                <i class="fas fa-tag"></i>  
+                <select id="landType" name="landType" required>  
+                    <option value="" disabled selected>--Purpose of Land Use--</option>  
+                    <option value="residential">Residential</option>  
+                    <option value="commercial">Commercial</option>  
+                    <option value="agricultural">Agricultural</option>  
+                    <option value="industrial">Industrial</option>  
+                </select>  
+            </div>  
+            <button type="submit">Register Land</button>  
+        </form> 
+    </main>
+    <footer>
+        <p>© 2024 Land Record Information System</p>
+    </footer>
+<script>
+    // Check if the user is logged in
+    if (!localStorage.getItem('loggedIn')) {
+        window.location.href = 'login.html';
+    }
+
+    // Logout function
+    document.getElementById('logout').addEventListener('click', function() {
+        localStorage.removeItem('loggedIn');
+        window.location.href = 'login.html';
+    });
+
+    const contractAddress = '0xc4B55B61cbf4E16Efdcd84B1d8763282dCE887Fe';
+    const contractABI = [
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "string",
+				"name": "landID",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "size",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "landType",
+				"type": "string"
+			}
+		],
+		"name": "LandRegistered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "ownerAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "addr",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "phone",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "email",
+				"type": "string"
+			}
+		],
+		"name": "OwnerRegistered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "transactionType",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"name": "TransactionSubmitted",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_landID",
+				"type": "string"
+			}
+		],
+		"name": "getLandDetails",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "landID",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "location",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "size",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "landType",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					}
+				],
+				"internalType": "struct LandRegistry.Land",
+				"name": "",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "addr",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "phone",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "email",
+						"type": "string"
+					}
+				],
+				"internalType": "struct LandRegistry.Owner",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_owner",
+				"type": "address"
+			}
+		],
+		"name": "getOwnershipHistory",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "transactionType",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct LandRegistry.Transaction[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "lands",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "landID",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "size",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "landType",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			}
+		],
+		"name": "login",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "owners",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "addr",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "phone",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "email",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_location",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_size",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_landType",
+				"type": "string"
+			}
+		],
+		"name": "registerLand",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_addr",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_phone",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_email",
+				"type": "string"
+			}
+		],
+		"name": "registerOwner",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			}
+		],
+		"name": "registerUser",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_landID",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_newOwner",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_transactionType",
+				"type": "string"
+			}
+		],
+		"name": "submitTransaction",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "transactions",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "transactionType",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_landID",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferLandOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "users",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "username",
+				"type": "string"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "passwordHash",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+
+
+
+
+
+		async function registerLand(event) {
+            event.preventDefault();
+
+            const ownerName = document.getElementById('ownerName').value;
+            const ownerAddress = document.getElementById('ownerAddress').value;
+            const ownerPhone = document.getElementById('ownerPhone').value;
+            const ownerEmail = document.getElementById('ownerEmail').value;
+            const landLocation = document.getElementById('landLocation').value;
+            const landArea = document.getElementById('landArea').value;
+            const landType = document.getElementById('landType').value;
+
+            if (typeof window.ethereum !== 'undefined') {
+                const web3 = new Web3(window.ethereum);
+                await window.ethereum.enable();
+
+                const contract = new web3.eth.Contract(contractABI, contractAddress);
+                const accounts = await web3.eth.getAccounts();
+
+                try {
+                    // Register Owner
+                    await contract.methods.registerOwner(ownerName, ownerAddress, ownerPhone, ownerEmail).send({ from: accounts[0] });
+
+                    // Register Land without LandID
+                    await contract.methods.registerLand(landLocation, landArea, landType).send({ from: accounts[0] });
+
+                    // Send data to backend to store in MySQL
+                    const response = await fetch('http://localhost/landreg/registerLand.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            ownerName,
+                            ownerAddress,
+                            ownerPhone,
+                            ownerEmail,
+                            landLocation,
+                            landArea,
+                            landType
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Redirect to summary page with land and owner details
+                        localStorage.setItem('landDetails', JSON.stringify(data));
+                        window.location.href = 'summary.html';
+                    } else {
+                        console.error('Failed to store data in MySQL');
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            } else {
+                alert('Please install MetaMask!');
+            }
+        }
+
+        document.getElementById('registrationForm').addEventListener('submit', registerLand);
+</script>
+
+</body>
+</html>

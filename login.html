@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Land Record Management System</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<link rel="stylesheet" href="fontawesome/css/all.min.css"> 
+<style>  
+
+
+
+
+/* General body styles */  
+        body {  
+            font-family: Arial, sans-serif;  
+        } 
+
+
+header {  
+            display: flex;  
+            justify-content: space-between;  
+            align-items: center;  
+            padding: 15px 20px;  
+            top: 0;  
+            z-index: 1000;  
+        }  
+
+
+        .logo {  
+            display: flex;  
+            align-items: center;  
+        }  
+
+        .logo h1 {  
+            margin: 0;  
+            font-size: 2rem;  
+        }  
+
+        .logo2 {  
+            margin-left: 0.5rem;  
+            font-size: 1rem;  
+            font-weight: 300;  
+        }  
+
+        /* Main content styles */  
+        main {  
+            max-width: 500px; /* Maximum width for the form */  
+            margin: 50px auto; /* Centering the form */  
+            padding: 70px ;  
+        }  
+
+        /* Heading styles */  
+        .heading {  
+            font-size: 2em; /* Larger heading size */  
+            color: #2d1a55; /* Main theme color */  
+            margin: 0 0 30px; /* Spacing below the heading */  
+        }  
+
+
+
+        /* Form group styles */  
+        .form-group {  
+            position: relative; /* Positioning context for absolutely positioned elements */  
+            margin-bottom: 20px; /* Space between form elements */  
+        }  
+
+        /* Icon styles in form groups */  
+        .form-group i {  
+            position: absolute; /* Overlay the icon */  
+            left: 10px; /* Left padding for icon */  
+            top: 14px; /* Vertical alignment */  
+            color: #999; /* Grey color for the icon */  
+        }  
+
+
+        /* Focus effect for input fields */  
+        .form-group input:focus {  
+            border-color: #2d1a55; /* Main color highlight on focus */  
+        }  
+
+
+ /* Input field styles */  
+        .form-group input {  
+            width: 90%; /* Full width inputs */  
+            padding: 12px 0 12px 40px; /* Padding for text and icon space */  
+            border: 1px solid #ccc; /* Light border for inputs */  
+            border-radius: 4px; /* Rounded corners */  
+            outline: none; /* No default outline */  
+            transition: border-color 0.3s; /* Smooth transition for border color */  
+        } 
+
+
+        /* Label styles for inputs */  
+        .form-group label {  
+            position: absolute; /* Overlay the label */  
+            top: 12px; /* Align with the input */  
+            left: 40px; /* Padding for the label */  
+            background: white; /* Label on white background */  
+            padding: 0 5px; /* Padding for label */  
+            color: #999; /* Grey color initially */  
+            transition: 0.3s; /* Smooth movement transition */  
+            pointer-events: none; /* Prevent interaction with the label */  
+        }  
+
+        /* Focus and condition when input is filled */  
+        .form-group input:focus + label,  
+        .form-group input:not(:placeholder-shown) + label {  
+            top: -10px; /* Move label up */  
+            left: 40px; /* Keep same horizontal position */  
+            font-size: 12px; /* Smaller font size */  
+            color: #2d1a55; /* Main theme color */  
+        }  
+
+
+
+/* Button styles */  
+        button {  
+            width: 100%; /* Full width button */  
+		margin-top: 20px;
+            padding: 12px ; /* Vertical padding */  
+            background-color: #2d1a55; /* Main button color */  
+            color: white; /* White text on button */  
+            border: none; /* No border for button */  
+            border-radius: 4px; /* Rounded corners */  
+            cursor: pointer; /* Pointer cursor on hover */  
+            font-size: 1em; /* Font size for button text */  
+            transition: background-color 0.3s; /* Smooth background color transition */  
+        }  
+
+
+
+        /* Button hover effect */  
+        button:hover {  
+            background-color: #8b7fa5; /* Lighter shade on hover */  
+        }  
+
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>LRIS.</h1>
+            <p class="logo2">Blockchain Solution</p>
+        </div>
+    </header>
+    <main>
+        <p class="heading" align="center">Login</p>
+        <form id="loginForm">  
+            <div class="form-group">  
+            <i class="fas fa-user"></i>  
+            <input type="text" id="username" name="username" placeholder=" " required>  
+            <label for="username">Username</label>  
+        </div>  
+        <div class="form-group">  
+            <i class="fas fa-lock"></i>  
+            <input type="password" id="password" name="password" placeholder=" " required>  
+            <label for="password">Password</label>  
+        </div>  
+        <button type="submit"><i class="fas fa-sign-in-alt"></i> Login</button>  
+        </form>  
+    </main>
+    <footer>
+        <p>© 2024 Land Record Information System</p>
+    </footer>
+
+    <script>
+        const contractAddress = '0xc4B55B61cbf4E16Efdcd84B1d8763282dCE887Fe';
+        const contractABI = [
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "string",
+				"name": "landID",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "size",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "landType",
+				"type": "string"
+			}
+		],
+		"name": "LandRegistered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "ownerAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "addr",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "phone",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "email",
+				"type": "string"
+			}
+		],
+		"name": "OwnerRegistered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "transactionType",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"name": "TransactionSubmitted",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_landID",
+				"type": "string"
+			}
+		],
+		"name": "getLandDetails",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "landID",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "location",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "size",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "landType",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					}
+				],
+				"internalType": "struct LandRegistry.Land",
+				"name": "",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "addr",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "phone",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "email",
+						"type": "string"
+					}
+				],
+				"internalType": "struct LandRegistry.Owner",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_owner",
+				"type": "address"
+			}
+		],
+		"name": "getOwnershipHistory",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "transactionType",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct LandRegistry.Transaction[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "lands",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "landID",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "size",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "landType",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			}
+		],
+		"name": "login",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "owners",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "addr",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "phone",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "email",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_location",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_size",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_landType",
+				"type": "string"
+			}
+		],
+		"name": "registerLand",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_addr",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_phone",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_email",
+				"type": "string"
+			}
+		],
+		"name": "registerOwner",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			}
+		],
+		"name": "registerUser",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_landID",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_newOwner",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_transactionType",
+				"type": "string"
+			}
+		],
+		"name": "submitTransaction",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "transactions",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "transactionType",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_landID",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferLandOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "users",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "username",
+				"type": "string"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "passwordHash",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+
+        async function login(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (typeof window.ethereum !== 'undefined') {
+                const web3 = new Web3(window.ethereum);
+                await window.ethereum.enable();
+
+                const contract = new web3.eth.Contract(contractABI, contractAddress);
+                const accounts = await web3.eth.getAccounts();
+                const result = await contract.methods.login(username, password).call({ from: accounts[0] });
+
+                if (result) {
+                    localStorage.setItem('loggedIn', 'true');
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Invalid credentials');
+                }
+            } else {
+                alert('Please install MetaMask!');
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', login);
+    </script>
+</body>
+</html>

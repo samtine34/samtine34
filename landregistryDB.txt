@@ -1,0 +1,71 @@
+CREATE DATABASE IF NOT EXISTS landregistrydb;
+
+USE landregistrydb;
+
+CREATE TABLE IF NOT EXISTS Users (
+    UserID INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(255) NOT NULL,
+    PasswordHash VARCHAR(255) NOT NULL,
+    Email VARCHAR(255),
+    Phone VARCHAR(20)
+);
+
+CREATE TABLE IF NOT EXISTS Owners (
+    OwnerID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Address VARCHAR(255),
+    Phone VARCHAR(20),
+    Email VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS Lands (
+    LandID VARCHAR(6) PRIMARY KEY,
+    Location VARCHAR(255) NOT NULL,
+    Size INT NOT NULL,
+    LandType VARCHAR(50),
+    OwnerID INT,
+    FOREIGN KEY (OwnerID) REFERENCES Owners(OwnerID)
+);
+
+CREATE TABLE IF NOT EXISTS Transactions (
+    TransactionID INT AUTO_INCREMENT PRIMARY KEY,
+    LandID VARCHAR(6),
+    OldOwnerID INT,
+    NewOwnerID INT,
+    TransactionType VARCHAR(50),
+    Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (LandID) REFERENCES Lands(LandID),
+    FOREIGN KEY (OldOwnerID) REFERENCES Owners(OwnerID),
+    FOREIGN KEY (NewOwnerID) REFERENCES Owners(OwnerID)
+);
+
+DELIMITER //
+
+CREATE PROCEDURE GenerateLandID(OUT newLandID VARCHAR(6))
+BEGIN
+    DECLARE done INT DEFAULT 0;
+    DECLARE tempLandID VARCHAR(6);
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    REPEAT
+        SET tempLandID = LPAD(FLOOR(100000 + RAND() * 900000), 6, '0');
+        SELECT COUNT(*) INTO done FROM Lands WHERE LandID = tempLandID;
+    UNTIL done = 0
+    END REPEAT;
+
+    SET newLandID = tempLandID;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER before_insert_land
+BEFORE INSERT ON Lands
+FOR EACH ROW
+BEGIN
+    CALL GenerateLandID(@newLandID);
+    SET NEW.LandID = @newLandID;
+END //
+
+DELIMITER ;

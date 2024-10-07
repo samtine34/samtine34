@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Land Ownership</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<link rel="stylesheet" href="fontawesome/css/all.min.css"> 
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>LRIS.</h1>
+            <p class="logo2">Blockchain Solution</p>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="register.html">Land Registration</a></li>
+                <li><a href="verify.html">Ownership Verification</a></li>
+            </ul>
+        </nav>
+        <div class="logout">
+            <a href="#" id="logout">Logout</a>
+        </div>
+    </header>  
+    <main>
+        <p align="center" class="heading">Transfer Land Ownership</p>
+        <form id="transactionForm">  
+            <div class="form-group">  
+                <i class="fas fa-exchange-alt"></i>  
+                <select id="transactionType" name="transactionType" required>  
+                    <option value="" disabled selected>--Select Transaction Type--</option>  
+                    <option value="sale">Sale</option>  
+                    <option value="lease">Lease</option>  
+                </select>  
+            </div>  
+            <div class="form-group">  
+                <i class="fas fa-map"></i>  
+                <input type="text" id="landId" name="landId" placeholder=" " required>  
+                <label for="landId">Land ID</label>  
+            </div>  
+            <div class="form-group">  
+                <i class="fas fa-user"></i>  
+                <input type="text" id="newOwnerName" name="newOwnerName" placeholder=" " required>  
+                <label for="newOwnerName">New Owner Name</label>  
+            </div>  
+            <div class="form-group">  
+                <i class="fas fa-home"></i>  
+                <input type="text" id="newOwnerAddress" name="newOwnerAddress" placeholder=" " required>  
+                <label for="newOwnerAddress">New Owner Address</label>  
+            </div>  
+            <div class="form-group">  
+                <i class="fas fa-phone"></i>  
+                <input type="text" id="newOwnerPhone" name="newOwnerPhone" placeholder=" " required>  
+                <label for="newOwnerPhone">New Owner Phone</label>  
+            </div>  
+            <div class="form-group">  
+                <i class="fas fa-envelope"></i>  
+                <input type="text" id="newOwnerEmail" name="newOwnerEmail" placeholder=" " required>  
+                <label for="newOwnerEmail">New Owner Email</label>  
+            </div>  
+            <button type="submit">Transfer Ownership</button>  
+        </form>  
+    </main>
+    <footer>
+        <p>© 2024 Land Record Information System</p>
+    </footer>
+
+    <script>
+        // Check if the user is logged in
+        if (!localStorage.getItem('loggedIn')) {
+            window.location.href = 'login.html';
+        }
+
+        // Logout function
+        document.getElementById('logout').addEventListener('click', function() {
+            localStorage.removeItem('loggedIn');
+            window.location.href = 'login.html';
+        });
+
+        const contractAddress = '0xc4B55B61cbf4E16Efdcd84B1d8763282dCE887Fe';
+        const contractABI = [
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "string",
+				"name": "landID",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "size",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "landType",
+				"type": "string"
+			}
+		],
+		"name": "LandRegistered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "ownerAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "addr",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "phone",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "email",
+				"type": "string"
+			}
+		],
+		"name": "OwnerRegistered",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "transactionType",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"name": "TransactionSubmitted",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_landID",
+				"type": "string"
+			}
+		],
+		"name": "getLandDetails",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "landID",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "location",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "size",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "landType",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					}
+				],
+				"internalType": "struct LandRegistry.Land",
+				"name": "",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "addr",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "phone",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "email",
+						"type": "string"
+					}
+				],
+				"internalType": "struct LandRegistry.Owner",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_owner",
+				"type": "address"
+			}
+		],
+		"name": "getOwnershipHistory",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "transactionType",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct LandRegistry.Transaction[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "lands",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "landID",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "location",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "size",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "landType",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			}
+		],
+		"name": "login",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "owners",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "addr",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "phone",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "email",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_location",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_size",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_landType",
+				"type": "string"
+			}
+		],
+		"name": "registerLand",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_addr",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_phone",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_email",
+				"type": "string"
+			}
+		],
+		"name": "registerOwner",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_password",
+				"type": "string"
+			}
+		],
+		"name": "registerUser",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_landID",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_newOwner",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "_transactionType",
+				"type": "string"
+			}
+		],
+		"name": "submitTransaction",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "transactions",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "transactionType",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_landID",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferLandOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "users",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "username",
+				"type": "string"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "passwordHash",
+				"type": "bytes32"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+		
+async function transferOwnership(event) {  
+    event.preventDefault();  
+
+    const transactionType = document.getElementById('transactionType').value;  
+    const landId = document.getElementById('landId').value;  
+    const newOwnerName = document.getElementById('newOwnerName').value;  
+    const newOwnerAddress = document.getElementById('newOwnerAddress').value;  
+    const newOwnerPhone = document.getElementById('newOwnerPhone').value;  
+    const newOwnerEmail = document.getElementById('newOwnerEmail').value;  
+
+    if (typeof window.ethereum !== 'undefined') {  
+        const web3 = new Web3(window.ethereum);  
+        await window.ethereum.enable();  
+
+        const contract = new web3.eth.Contract(contractABI, contractAddress);  
+        const accounts = await web3.eth.getAccounts();  
+
+        try {  
+            // Register new owner on the blockchain  
+            await contract.methods.registerOwner(newOwnerName, newOwnerAddress, newOwnerPhone, newOwnerEmail).send({ from: accounts[0] });  
+
+            // Transfer ownership on the blockchain  
+            const receipt = await contract.methods.transferOwnership(landId, accounts[0], transactionType).send({ from: accounts[0] });  
+
+            // Store transaction hash in localStorage  
+            localStorage.setItem('transactionHash', receipt.transactionHash);  
+
+            // Now store the new owner details in MySQL database  
+            const ownerData = {  
+                landId: landId,  
+                newOwnerName: newOwnerName,  
+                newOwnerAddress: newOwnerAddress,  
+                newOwnerPhone: newOwnerPhone,  
+                newOwnerEmail: newOwnerEmail,  
+                transactionType: transactionType,  
+                transactionHash: receipt.transactionHash,  
+            };  
+
+            // Send post request to the server  
+            const response = await fetch('http://localhost/landreg/updateOwnership.php', {  
+                method: 'POST',  
+                headers: {  
+                    'Content-Type': 'application/json'  
+                },  
+                body: JSON.stringify(ownerData)  
+            });  
+
+            if (response.ok) {  
+                // Redirect to agreement.html with the necessary details  
+                window.location.href = `agreement.html?newOwnerName=${encodeURIComponent(newOwnerName)}&newOwnerAddress=${encodeURIComponent(newOwnerAddress)}&newOwnerPhone=${encodeURIComponent(newOwnerPhone)}&newOwnerEmail=${encodeURIComponent(newOwnerEmail)}&landId=${encodeURIComponent(landId)}&transactionType=${encodeURIComponent(transactionType)}&date=${encodeURIComponent(new Date().toLocaleDateString())}`;  
+            } else {  
+                alert('Failed to update ownership in the database');  
+            }  
+        } catch (error) {  
+            console.error(error);  
+            alert('An error occurred during the transaction');  
+        }  
+    } else {  
+        alert('Please install MetaMask!');  
+    }  
+}
+
+    document.getElementById('transactionForm').addEventListener('submit', transferOwnership);
+
+</script>
+
+
+</body>
+</html>

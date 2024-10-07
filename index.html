@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land Record Information System</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+        .welcome {
+            width: 70%;
+            margin: auto;
+            text-align: justify;
+        }
+        
+        
+        section {
+            padding: 2em;
+            margin: 1em 0;
+    border: 1px solid #ccc;
+        }
+        section img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 1em;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px ; /* Vertical padding */  
+            background-color: #2d1a55; /* Main button color */  
+            color: white; /* White text on button */  
+            border: none; /* No border for button */  
+            border-radius: 4px; /* Rounded corners */  
+            cursor: pointer; /* Pointer cursor on hover */  
+            font-size: 1em; /* Font size for button text */  
+            transition: background-color 0.3s; /* Smooth background color transition */  
+            text-align: center;
+            text-decoration: none;
+        }
+        .button:hover {background-color: #8b7fa5}
+        .button:active {
+            background-color: #8b7fa5;
+            transform: translateY(4px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>LRIS.</h1>
+            <p class="logo2">Blockchain Solution</p>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="register.html">Land Registration</a></li>
+                <li><a href="verify.html">Ownership Verification</a></li>
+            </ul>
+        </nav>
+        <div class="logout">
+            <a href="#" id="logout">Logout</a>
+        </div>
+    </header>    
+    <main>
+        <div class="welcome">
+            
+    <section id="home">
+        <p class="heading">Welcome to the Land Record Information System</p>
+        <p>Secure and Transparent Land Management with Blockchain Technology.Our system leverages blockchain technology to provide a secure and transparent way to manage land records.</p>
+        <img src="images/blockchain.jpg" alt="blockchain">
+        
+	
+        <a href="register.html" class="button">Register Land</a>
+    </section>
+    <section id="about">
+        <p class="heading">About Us</p>
+        <p>We are dedicated to revolutionizing land management by using blockchain technology to ensure data integrity and transparency.</p>
+        <img src="images/about.jpg" alt="Blockchain Technology">
+    </section>
+    <section id="features">
+        <p class="heading">Features</p>
+        <ul>
+            <li>Secure Land Registration</li>
+            <li>Transparent Ownership Records</li>
+            <li>Immutable Transaction History</li>
+            <li>Easy Access to Land Information</li>
+        </ul>
+    </section>
+    <section id="contact">
+        <p class="heading">Contact Us</p>
+        <p>For more information, please contact us at <a href="mailto:samtine34@gmail.com">samtine34@gmail.com</a>.</p>
+    </section>
+</main>
+    <footer>
+        <p>© 2024 Land Record Information System. All rights reserved.</p>
+    </footer>
+    <script>
+        // Check if the user is logged in
+        if (!localStorage.getItem('loggedIn')) {
+            window.location.href = 'login.html';
+        }
+
+        // Logout function
+        document.getElementById('logout').addEventListener('click', function() {
+            localStorage.removeItem('loggedIn');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

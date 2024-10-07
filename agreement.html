@@ -1,0 +1,151 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Land Transfer of Ownership Agreement</title>  
+    <style>  
+        * {  
+            font-family: "Segoe UI", Arial, sans-serif;  
+            font-size: 1em;  
+            text-align: justify;  
+        }  
+        /* Set A4 size for print */  
+        @page {  
+            size: A4;  
+            margin: 0;  
+        }  
+        @media print {  
+            html, body {  
+                width: 210mm;  
+                height: 297mm;  
+                margin: 0;  
+                padding: 0;  
+                overflow: hidden;  
+                -webkit-print-color-adjust: exact;  
+                print-color-adjust: exact;  
+            }  
+            .content {  
+                width: 100%;  
+                height: 100%;  
+                padding: 20mm;  
+                box-sizing: border-box;  
+                background-color: white;  
+                font-family: Arial, sans-serif;  
+                overflow: hidden;  
+                position: relative;  
+                background-image: url('images/background.png');  
+                background-size: cover;  
+            }  
+            .noprint {  
+                display: none;  
+            }  
+        }  
+        @media screen {  
+            .content {  
+                width: 210mm;  
+                height: 297mm;  
+                margin: auto;  
+                padding: 20mm;  
+                box-sizing: border-box;  
+                background-color: #f0f0f0;  
+                position: relative;  
+                background-image: url('images/background.png');  
+                background-size: cover;  
+            }  
+        }  
+        h1 {  
+            text-align: center;  
+        }  
+        .section {  
+            margin-bottom: 20px;  
+        }  
+        .label {  
+            font-weight: bold;  
+        }  
+        .fill-in {  
+            border-bottom: 1px solid black;  
+            display: inline-block;  
+            width: 300px;  
+        }  
+    </style>  
+</head>  
+<body>  
+
+    <div class="content">  
+        <h1>LAND TRANSFER OF OWNERSHIP AGREEMENT</h1>  
+    
+        <div class="section">  
+            <p>This Land Transfer of Ownership Agreement ("Agreement") is made and entered into as of this <span id="day">___</span> day of <span id="month">________</span>, <span id="year"></span>, by and between:</p>  
+        </div>  
+        
+        <div class="section">  
+            <p class="label">Seller:</p>  
+            <p>Name: <span class="fill-in" id="sellerName"></span></p>  
+            <p>Address: <span class="fill-in" id="sellerAddress"></span></p>  
+            <p>Email: <span class="fill-in" id="sellerEmail"></span></p>  
+            <p>Telephone: <span class="fill-in" id="sellerPhone"></span></p>  
+            <p>(Hereinafter referred to as "Seller")</p>  
+        </div>  
+    
+        <div class="section">  
+            <p><strong>AND</strong></p>  
+        </div>  
+
+        <div class="section">  
+            <p class="label">Buyer:</p>  
+            <p>Name: <span class="fill-in" id="buyerName"></span></p>  
+            <p>Address: <span class="fill-in" id="buyerAddress"></span></p>  
+            <p>Email: <span class="fill-in" id="buyerEmail"></span></p>  
+            <p>Telephone: <span class="fill-in" id="buyerPhone"></span></p>  
+            <p>(Hereinafter referred to as "Buyer")</p>  
+        </div>  
+
+        <div class="section">  
+            <p>WHEREAS, the Seller is the lawful owner of the land described herein and wishes to transfer ownership of said land to the Buyer under the terms set forth herein.</p>  
+        </div>  
+
+        <div class="section">  
+            <h2>Description of Land:</h2>  
+            <p>Land ID: <span class="fill-in" id="landId"></span></p>  
+            <p>Location: <span class="fill-in"></span></p>  
+            <p>Area: <span class="fill-in"></span> (in square meters or acres)</p>  
+            <p>Purpose of Land: <span class="fill-in"></span></p>  
+        </div>  
+
+        <div class="section">   
+            <p>This Agreement contains the entire understanding between the Seller and the Buyer regarding the subject matter herein and supersedes all prior discussions and agreements.  
+            <br /> <br />This Agreement may not be amended or modified except in writing signed by both parties.</p>  
+        </div>  
+    </div>  
+
+    <button onclick="printPage()" class="noprint">Print</button>  
+
+    <script>  
+        // Function to fill the agreement form with data from the URL  
+        function fillAgreement() {  
+            const urlParams = new URLSearchParams(window.location.search);  
+            document.getElementById('sellerName').textContent = urlParams.get('newOwnerName');  
+            document.getElementById('buyerName').textContent = urlParams.get('newOwnerName'); // Assuming the new owner is the buyer  
+            document.getElementById('sellerAddress').textContent = urlParams.get('newOwnerAddress');  
+            document.getElementById('buyerAddress').textContent = urlParams.get('newOwnerAddress'); // Assuming the new owner is the buyer  
+            document.getElementById('sellerEmail').textContent = urlParams.get('newOwnerEmail');  
+            document.getElementById('buyerEmail').textContent = urlParams.get('newOwnerEmail'); // Assuming the new owner is the buyer  
+            document.getElementById('sellerPhone').textContent = urlParams.get('newOwnerPhone');  
+            document.getElementById('buyerPhone').textContent = urlParams.get('newOwnerPhone'); // Assuming the new owner is the buyer  
+            document.getElementById('landId').textContent = urlParams.get('landId');  
+            
+            // Set the date details if required - here is a sample for current date  
+            const today = new Date();  
+            document.getElementById('day').textContent = today.getDate();  
+            document.getElementById('month').textContent = today.toLocaleString('default', { month: 'long' });  
+            document.getElementById('year').textContent = today.getFullYear();  
+        }  
+        
+        fillAgreement(); // Call the function to populate the fields  
+        function printPage() {  
+            window.print();  
+        }  
+    </script>  
+</body>  
+</html>

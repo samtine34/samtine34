@@ -1,0 +1,232 @@
+* {
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {  
+            background: linear-gradient(to right, #2d1a55, #684d9f);  
+            color: #ffffff;  
+            display: flex;  
+            justify-content: space-between;  
+            align-items: center;  
+            padding: 15px 20px;  
+            position: fixed;  
+            width: 100%;  
+            top: 0;  
+            z-index: 1000;  
+        }  
+
+        .logo {  
+            display: flex;  
+            align-items: center;  
+        }  
+
+        .logo h1 {  
+            margin: 0;  
+            font-size: 2rem;  
+        }  
+
+        .logo2 {  
+            margin-left: 0.5rem;  
+            font-size: 1rem;  
+            font-weight: 300;  
+        }  
+
+        nav ul {  
+            list-style: none;  
+            padding: 0;  
+            margin-left: 600px;  
+        }  
+
+        nav ul li {  
+            display: inline;  
+            margin: 0 5px;  
+        }  
+
+nav ul li:not(:last-child)::after {  
+    content: '|';  
+    margin-left: 15px; /* Optional spacing between link and separator */  
+    color: #ffffff;   /* Change this if you want the separator to have a different color */  
+} 
+
+        nav ul li a {  
+            color: #fff;  
+            text-decoration: none;  
+            font-weight: 500;  
+            transition: color 0.3s;  
+        }  
+
+        nav ul li a:hover {  
+            color: #e4c3da;  
+        }  
+
+        .logout {  
+            margin-right: 50px;  
+        }  
+
+        .logout a {  
+            color: #ffffff;  
+            text-decoration: none;  
+            padding: 10px 15px;  
+            background-color: rgba(255, 255, 255, 0.2);  
+            border-radius: 5px;  
+            transition: background-color 0.3s;  
+        }  
+
+        .logout a:hover {  
+            background-color: rgba(255, 255, 255, 0.3);  
+        }
+
+
+main {
+    padding-top: .5rem;
+    margin-top: 5rem; /* Adjust this value to avoid content being hidden behind the fixed header */
+}
+
+
+.heading{
+    font-size: 2.5em;
+    color: #2d1a55;
+    bottom: 0;
+}
+
+
+.heading-2{
+    font-size: 1.5em;
+    color: #2d1a55;
+}
+
+form {
+    width: 40%;
+    border: 1px solid #ccc;
+    margin: 0 auto 5%;
+    padding: 5rem;
+}
+
+        .form-group {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        /* Form group styles */  
+        .form-group {  
+            position: relative; /* Positioning context for absolutely positioned elements */  
+            margin-bottom: 20px; /* Space between form elements */  
+        }  
+
+        /* Icon styles in form groups */  
+        .form-group i {  
+            position: absolute; /* Overlay the icon */  
+            left: 10px; /* Left padding for icon */  
+            top: 14px; /* Vertical alignment */  
+            color: #999; /* Grey color for the icon */  
+        }  
+
+
+        /* Focus effect for input fields */  
+        .form-group input:focus, select:focus {  
+            border-color: #2d1a55; /* Main color highlight on focus */  
+        }  
+
+
+ /* Input field styles */  
+        .form-group input{  
+            width: 90%; /* Full width inputs */  
+            padding: 12px 0 12px 40px; /* Padding for text and icon space */  
+            border: 1px solid #ccc; /* Light border for inputs */  
+            border-radius: 4px; /* Rounded corners */  
+            outline: none; /* No default outline */  
+            transition: border-color 0.3s; /* Smooth transition for border color */  
+        } 
+
+
+        /* Label styles for inputs */  
+        .form-group label {  
+            position: absolute; /* Overlay the label */  
+            top: 10px; /* Align with the input */  
+            left: 40px; /* Padding for the label */  
+            background: white; /* Label on white background */  
+            padding: 0 5px; /* Padding for label */  
+            color: #999; /* Grey color initially */  
+            transition: 0.3s; /* Smooth movement transition */  
+            pointer-events: none; /* Prevent interaction with the label */  
+        }  
+
+        /* Focus and condition when input is filled */  
+        .form-group input:focus + label,  
+        .form-group input:not(:placeholder-shown) + label {  
+            top: -10px; /* Move label up */  
+            left: 40px; /* Keep same horizontal position */  
+            font-size: 12px; /* Smaller font size */  
+            color: #2d1a55; /* Main theme color */  
+        }  
+
+
+
+/* Button styles */  
+        button {  
+            width: 100%; /* Full width button */  
+            padding: 12px ; /* Vertical padding */  
+            background-color: #2d1a55; /* Main button color */  
+            color: white; /* White text on button */  
+            border: none; /* No border for button */  
+            border-radius: 4px; /* Rounded corners */  
+            cursor: pointer; /* Pointer cursor on hover */  
+            font-size: 1em; /* Font size for button text */  
+            transition: background-color 0.3s; /* Smooth background color transition */  
+        }  
+
+
+        select {
+            width: 98%;
+            margin-bottom: 10px;
+            padding: 12px 0 12px 40px; /* Padding for text and icon space */  
+            border: 1px solid #ccc;
+            font-size: .8em;
+        }
+        
+        button {
+            background-color: #2d1a55;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            width: 40%;
+            padding: 10px;
+            float: right ;
+            font-size: 1em;
+            margin: auto 0;
+        }
+        
+        button:hover {
+            background-color: #8b7fa5;
+            transition: background-color 0.5s, font-weight 0.5s;
+        }
+
+
+         
+        .print-button {  
+	width: 100px;
+            display: block;  
+            margin: auto;  
+            padding: 10px 10px;  
+            color: white;  
+            border: none;  
+            cursor: pointer;  
+            border-radius: 4px;  
+            font-size: 1em;  
+            transition: background-color 0.3s;  
+        }  
+
+        
+        footer {
+    background-color: #b3b3b3;
+    color: #272727;
+    text-align: center;
+    padding: .05px;
+    bottom: 0;
+}

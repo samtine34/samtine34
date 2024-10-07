@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land Allocation Letter</title>
+<link rel="stylesheet" href="fontawesome/css/all.min.css"> 
+    <link rel="stylesheet" href="styles.css">  
+    <style>
+
+	*{
+            font-family: 'Times New Roman', Times, serif;
+                font-family: 'Times New Roman', Times, serif; /* Use Times New Roman */
+		font-size: 1.03em;
+		}
+
+        /* Set A4 size for print */
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        @media print {
+            html, body {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+                overflow: hidden; /* Prevent overflow */
+                -webkit-print-color-adjust: exact; /* Ensure background colors and images are printed */
+                print-color-adjust: exact; /* Ensure background colors and images are printed */
+            }
+            .content {
+                width: 100%;
+                height: 100%;
+                padding: 20mm;
+                box-sizing: border-box;
+                background-color: white; /* Ensure white background for print */
+                font-family: Arial, sans-serif;
+                overflow: hidden; /* Prevent overflow */
+                position: relative;
+		
+                background-image: url('images/background.png'); /* Ensure background image is printed */
+                background-size: cover;
+            }
+            .headed {
+                text-align: center;
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100%;
+            }
+            #logo {
+                max-width: 100%;
+                height: auto;
+            }
+            .addressee {
+                margin-top: 200px; /* Adjust as needed */
+                text-align: justify;
+            }
+            /* Hide print button when printing */
+            .noprint {
+                display: none;
+            }
+        }
+        /* Optional: Style for screen view */
+        @media screen {
+            html, body {
+                -webkit-print-color-adjust: exact; /* Ensure background colors and images are printed */
+                print-color-adjust: exact; /* Ensure background colors and images are printed */
+            }
+            .content {
+                width: 210mm;
+                height: 297mm;
+                margin: auto;
+                padding: 20mm;
+                box-sizing: border-box;
+                background-color: #f0f0f0; /* Light gray background for screen */
+                position: relative;
+
+                background-image: url('images/background.png'); /* Ensure background image is printed */
+                background-size: cover;
+            }
+            .headed {
+                text-align: center;
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100%;
+            }
+            #logo {
+                max-width: 100%;
+                height: auto;
+            }
+            .addressee {
+                margin-top: 200px; /* Adjust as needed */
+                text-align: justify;
+            }
+        }
+
+.signature {
+        background-image: url('images/stamp.png');
+        background-repeat: no-repeat;
+		background-size: contain;
+		padding: 20px 40px 20px 0;
+		margin-left: 50%;
+		line-height: 5px; 
+	}
+
+#back{
+	margin-right: 100px;
+	}
+    </style>
+</head>
+<body>
+
+    <div class="content">
+
+        <div class="headed" align="center">
+            <img src="images/headed.png" alt="My Logo" id="logo">
+            <hr>
+        </div>
+
+    <div class="summary">    
+        <div class="addressee">
+
+            <p>To: <span id="ownerName"></span></p>
+            <p>Address: <span id="ownerAddress"></span></p>
+            <br><br>
+            <p>Dear Sir/Madam,</p>
+        </div>
+        
+        <div class="letter_body" align="justify">
+            <p align="center"><u><strong>PROVISIONAL LETTER OF ALLOCATION OF PLOT OF LAND</strong></u></p>
+            <p>I am pleased to inform you that your request for land allocation has been approved. The details of the allocation are as follows: 
+                <ul>
+                    <li><strong>Land Location:</strong> <span id="landLocation"></span></li>
+                    <li><strong>Land Area:</strong> <span id="landArea"></span> sq. meters</li>
+                    <li><strong>Land Type:</strong> <span id="landType"></span></li>
+                </ul>
+            <p>2. Please visit our office to complete the necessary documentation and formalities. We look forward to your cooperation.</p>
+            <p>3. Your early response would be highly appreciated please.</p>
+            <p>Thank you.</p>
+
+            <div class="signature">
+		<p>Sincerely,</p><br>
+                <p><strong>Sydney Peters</strong></p>
+                <p><strong>Allocation Officer</strong></p>
+                <p><strong>Date</strong></p>    
+                <p><i>For: Honourable Commissioner</p>                    
+            </div>
+        
+            <button onclick="printPage()" class="noprint"><i class="fas fa-print"></i> Print</button>
+
+<button class="noprint" onclick="goBack()" id="back">  
+    <i class="fas fa-arrow-left"></i> Back  
+</button> 
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<script>  
+    document.addEventListener('DOMContentLoaded', function() {  
+        const selectedDetails = JSON.parse(localStorage.getItem('selectedOwnershipDetails'));  
+
+        if (selectedDetails) {  
+            document.getElementById('ownerName').textContent = selectedDetails.ownerName;  
+            document.getElementById('ownerAddress').textContent = selectedDetails.ownerAddress;  
+            document.getElementById('landLocation').textContent = selectedDetails.landLocation;  
+            document.getElementById('landArea').textContent = selectedDetails.landArea;  
+            document.getElementById('landType').textContent = selectedDetails.landType;  
+        } else {  
+            // Handle case where there are no selected details  
+            alert("No ownership details found.");  
+            window.location.href = 'index.html'; // or redirect as necessary  
+        }  
+    });  
+
+
+    
+        function goBack() {  
+            window.location.href = 'verify.html'; // Redirect back to the registration page  
+        }  
+
+
+        
+        function printPage() {
+            window.print();
+        }
+</script>
+</body>
+</html>
