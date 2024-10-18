@@ -1,7 +1,7 @@
 - 👋 Hi, I’m @samtine34
-- 👀 I’m interested in Artificial Intelligence
-- 🌱 I’m currently learning Python and AIML
-- 💞️ I’m looking to collaborate on Developing a Chatbot
+- 👀 I’m interested in blockchain technology, web3, software development
+- 🌱 I’m currently learning solidity, javascript
+- 💞️ I’m looking to collaborate on Developing a blockchain system
 - 📫 How to reach me samtine34@gmail.com
 
 <!---
